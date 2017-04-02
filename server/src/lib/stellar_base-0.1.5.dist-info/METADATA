@@ -1,0 +1,33 @@
+Metadata-Version: 2.0
+Name: stellar-base
+Version: 0.1.5
+Summary: Code for managing Stellar.org blockchain transactions and accounts 
+    using stellar-base in python. Allows full functionality interfacing
+    with the Horizon front end.
+Home-page: http://github.com/stellarCN/py-stellar-base/
+Author: antb123
+Author-email: awbarker@gmail.com
+License: Apache
+Keywords: stellar.org,lumens,xlm,blockchain
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Financial and Insurance Industry
+Classifier: Natural Language :: Chinese (Simplified)
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Requires-Dist: SSEClient
+Requires-Dist: crc16
+Requires-Dist: ed25519
+Requires-Dist: numpy
+Requires-Dist: requests
+
+stellar-base is used for accessing the stellar.org blockchain with python
+
+
