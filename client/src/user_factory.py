@@ -3,6 +3,7 @@ import json
 
 from stellar_base.keypair import Keypair
 
+from src import printers
 from src.user import User
 
 SERVER_URL = "http://localhost:9088"
@@ -42,7 +43,7 @@ class UserFactory(object):
 class LoginFactory(UserFactory):
 
     def print_title(self):
-        print "=" * 10 + " Log in " + "=" * 10
+        printers.print_title("LOG IN")
 
     def get_or_create_user(self):
         url = '%s/user/' % SERVER_URL
@@ -56,12 +57,14 @@ class LoginFactory(UserFactory):
 class NewAccountFactory(UserFactory):
 
     def print_title(self):
-        print "=" * 10 + " New Account " + "=" * 10
+        printers.print_title("NEW ACCOUNT")
 
     def get_or_create_user(self):
         url = '%s/user/' % SERVER_URL
         data = self._serialize()
-        data['account_id'] = self._generate_public_key()
+        kp = Keypair.random()
+        data['account_id'] = kp.address().decode()
+        data['secret'] = kp.seed().decode()
         r = requests.post(url, headers=self._headers(), data=json.dumps(data))
         if not r.ok:
             raise Exception(r.content)

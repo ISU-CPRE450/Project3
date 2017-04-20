@@ -21,12 +21,18 @@ class Users(MethodView):
     def post(self):
         data = request.get_json()
         if not all(
-                ['email' in data, 'password' in data, 'account_id' in data]):
-            return "'email', 'password', and account_id required", 400
+                ['email' in data, 'password' in data, 'account_id' in data,
+                 'secret' in data]):
+            return "email, password, account_id, and secret required", 400
         user = User.query(User.email == data['email']).get()
         if user:
             return 'A user with that email already exists', 409
-        user = User.create(data['email'], data['password'], data['account_id'])
+        try:
+            user = User.create(
+                data['email'], data['password'], data['account_id'],
+                data['secret'])
+        except Exception as e:
+            return e.message, 400
         return json.dumps(user.serialize()), 200
 
 

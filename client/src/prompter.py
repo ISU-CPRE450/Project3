@@ -2,6 +2,7 @@ import base64
 import getpass
 import re
 
+from src.transaction import Transaction
 from src.user_factory import LoginFactory, NewAccountFactory
 
 
@@ -23,6 +24,11 @@ class Prompter(object):
 
     @staticmethod
     def request_credentials():
+        # TODO remove -- used for faster development
+        '''
+        if True:
+            return {'email': 'mcgovern@iastate.edu', 'password': base64.b64encode('pass')}
+        '''
         d = {'email': None, 'password': None}
         while True:
             email = raw_input('Enter email: ')
@@ -34,3 +40,18 @@ class Prompter(object):
             d['email'] = email
             d['password'] = base64.b64encode(password)
             return d
+
+    @staticmethod
+    def request_transaction_data():
+        account_id = None
+        while True:
+            if not account_id:
+                account_id = raw_input('Enter target account id: ')
+            amount_str = raw_input('Enter amount you wish to transfer: $')
+            amount = None
+            try:
+                amount = float(amount_str)
+            except:
+                print 'Amount must be a float'
+                continue
+            return Transaction(account_id, amount)
