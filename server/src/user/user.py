@@ -2,6 +2,8 @@ import requests
 
 from google.appengine.ext import ndb
 
+from src.participant.participant import Participant
+
 
 class User(ndb.Model):
     account_id = ndb.StringProperty(required=True)
@@ -27,6 +29,13 @@ class User(ndb.Model):
             account_id
         r = requests.get(url)
         r.raise_for_status()
+
+    def spawn_participant(self, amount, hash_value):
+        p = Participant.create(
+            user=self.key,
+            hash_value=hash_value,
+            amount=amount)
+        return p
 
     def serialize(self):
         return self._to_dict()

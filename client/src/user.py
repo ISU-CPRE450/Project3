@@ -1,7 +1,10 @@
 from datetime import datetime
+import requests
 
 from stellar_base.address import Address
 from stellar_base.builder import Builder
+
+SERVER_URL = "http://localhost:9088"
 
 
 class User(object):
@@ -12,6 +15,11 @@ class User(object):
         self.account_id = account_id
         self.secret = secret
         self.password = password
+        self.game_id = None
+
+    def get_game(self):
+        if not self.game_id:
+            raise Exception("You have not joined a game yet")
 
     def get_address(self):
         address = Address(address=self.account_id)
@@ -58,3 +66,29 @@ class User(object):
             transaction.target_account_id, transaction.amount, 'XLM')
         builder.sign()
         builder.submit()
+
+
+class Banker(User):
+
+    def proctor_new_game(self):
+        url = '%s/api/game/%s/' % (SERVER_URL, self.account_id)
+        r = requests.post(url)
+        if not r.ok:
+            raise Exception(r.text)
+        data = r.json()
+        self.game_id = data['id']
+
+    def disconnect_from_game(self):
+        url = '%s/api/game/%s/' % (SERVER_URL, self.game_id)
+        self.game_id = None
+        r = requests.delete(url)
+        if not r.ok:
+            raise Exception(r.text)
+
+    def get_participants(self):
+        url = '%s/api/game/%s/' % (SERVER_URL, self.game_id)
+        r = requests.get(url)
+        if not r.ok:
+            raise Exception(r.text)
+        data = r.json()
+        return data['participants']

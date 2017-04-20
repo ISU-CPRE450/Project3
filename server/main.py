@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_debugtoolbar import DebugToolbarExtension
+from src.api.game import setup_urls as setup_game_urls
 from src.api.user import setup_urls as setup_user_urls
 
 APP_DEBUG = True
@@ -11,6 +12,7 @@ app.secret_key = 'Secret_Coin_Flipper_Key'
 # app.url_map.converters['regex'] = RegexConverter
 toolbar = DebugToolbarExtension(app)
 
+setup_game_urls(app)
 setup_user_urls(app)
 
 

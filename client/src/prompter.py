@@ -25,10 +25,8 @@ class Prompter(object):
     @staticmethod
     def request_credentials():
         # TODO remove -- used for faster development
-        '''
         if True:
             return {'email': 'mcgovern@iastate.edu', 'password': base64.b64encode('pass')}
-        '''
         d = {'email': None, 'password': None}
         while True:
             email = raw_input('Enter email: ')
