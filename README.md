@@ -1,5 +1,7 @@
 ## CPRE 450: Coin Flipping Game
 
+Check it out on Github: https://github.com/ISU-CPRE450/Project3
+
 ### Description
 
 This assignment was split into two parts: phase 1 and phase 2.
