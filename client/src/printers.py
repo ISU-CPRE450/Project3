@@ -20,3 +20,19 @@ def print_transactions(user, transactions):
         if account_id == user.account_id:
             message = 'Paid $%s' % (amount)
         print message
+
+
+def print_game(game):
+    print '=' * 40
+    print 'Time:', game['time_created']
+    p1 = game['participants'][0]
+    p2 = game['participants'][1]
+    value = (p1['random_value'] + p2['random_value']) % 2
+    player_number = 1
+    if value > 0:
+        player_number = 2
+    for i, p in enumerate(game['participants']):
+        print 'Player', i + 1, '(%s)' % p['user']['account_id']
+        print '\tBet Amount:', p['bet_amount']
+        print '\tGuessed Number:', p['random_value']
+    print 'Winner: Player', player_number

@@ -25,8 +25,13 @@ class Prompter(object):
     @staticmethod
     def request_credentials():
         # TODO remove -- used for faster development
+        '''
         if True:
-            return {'email': 'mcgovern@iastate.edu', 'password': base64.b64encode('pass')}
+            return {
+                'email': 'mcgovern@iastate.edu',
+                'password': base64.b64encode('pass')
+            }
+        '''
         d = {'email': None, 'password': None}
         while True:
             email = raw_input('Enter email: ')
@@ -53,3 +58,12 @@ class Prompter(object):
                 print 'Amount must be a float'
                 continue
             return Transaction(account_id, amount)
+
+    @staticmethod
+    def request_bet_amount():
+        while True:
+            amount_str = raw_input('Enter amount you wish to bet: $')
+            try:
+                return float(amount_str)
+            except:
+                print 'Amount must be a float'

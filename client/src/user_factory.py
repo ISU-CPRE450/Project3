@@ -67,7 +67,7 @@ class NewAccountFactory(UserFactory):
         data['secret'] = kp.seed().decode()
         r = requests.post(url, headers=self._headers(), data=json.dumps(data))
         if not r.ok:
-            raise Exception(r.content)
+            raise Exception(r.text)
         print "New user successfully created!"
         return User(**r.json())
 

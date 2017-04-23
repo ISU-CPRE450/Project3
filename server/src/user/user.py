@@ -30,12 +30,14 @@ class User(ndb.Model):
         r = requests.get(url)
         r.raise_for_status()
 
-    def spawn_participant(self, amount, hash_value):
+    def spawn_participant(self, amount, random_value, hash_value):
         p = Participant.create(
             user=self.key,
             hash_value=hash_value,
+            random_value=random_value,
             amount=amount)
         return p
 
     def serialize(self):
-        return self._to_dict()
+        d = self._to_dict()
+        return d

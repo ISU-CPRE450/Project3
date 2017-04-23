@@ -1,6 +1,6 @@
 from src.prompter import Prompter
 from src import printers
-from src.user import Banker
+from src.user import Banker, Participant
 from time import sleep
 
 
@@ -16,6 +16,7 @@ def play_as_banker_or_participant():
             play_as_banker()
             break
         elif option == '2':
+            user.__class__ = Participant
             play_as_participant()
             break
         else:
@@ -37,15 +38,15 @@ def play_as_banker():
                     enter_proctor_view()
                 except Exception as e:
                     print 'Error:', e.message
+                    print 'If you are proctoring another game, restart the '\
+                          'program to end any games you are proctoring'
             elif option == '2':
-                print 'attempting to view history'
-            elif option == '3':
                 try:
-                    user.disconnect_from_game()
+                    user.get_and_print_latest_game_transactions()
                 except Exception as e:
-                    print 'Error:', e.message
-                print 'Exiting program'
-                break
+                    print 'Error getting latest game transactions:', e.message
+            elif option == '3':
+                raise KeyboardInterrupt
             else:
                 print 'Unrecognized option:', option
     except Exception as e:
@@ -60,21 +61,38 @@ def play_as_banker():
 
 def enter_proctor_view():
     participants = []
-    while True:
-        printers.print_title('PROCTOR GAME')
-        if len(participants) == 0:
-            print 'Waiting for participants...'
-        while len(participants) < 2:
-            local_participants = user.get_participants()
-            if len(local_participants) > len(participants):
-                print 'Participant joined! ID:', \
-                    local_participants[-1].account_id
-            elif len(local_participants) == len(participants):
-                pass
-            else:
-                print 'Participant disconnected'
-            participants = local_participants
-            sleep(1.5)
+    printers.print_title('PROCTOR GAME')
+    print 'Waiting for participants...'
+    while len(participants) < 2:
+        local_participants = user.get_participants()
+        if len(local_participants) > len(participants):
+            print 'Participant joined! ID:', \
+                local_participants[-1]['user']['account_id']
+        elif len(local_participants) == len(participants):
+            pass
+        else:
+            print 'Participant disconnected'
+        participants = local_participants
+        sleep(1.5)
+    winner = None
+    try:
+        winner = user.get_winner()
+    except Exception as e:
+        print e.message
+        user.resolve_bad_hash()
+        return
+    participants = user.get_participants()
+    print 'Player 1 guess:', participants[0]['random_value']
+    print 'Player 2 guess:', participants[1]['random_value']
+    loser = None
+    if winner['user']['account_id'] == participants[0]['user'][
+            'account_id']:
+        loser = participants[1]
+        print 'Winner: Player 1'
+    else:
+        loser = participants[0]
+        print 'Winner: Player 2'
+    user.give_earnings(winner, loser)
 
 
 def play_as_participant():
@@ -92,32 +110,43 @@ def play_as_participant():
         option = raw_input("Enter number: ").strip()
         if option == '1':
             print 'attempting to join game'
+            amount = Prompter.request_bet_amount()
+            try:
+                user.join_game(amount)
+                enter_game_view()
+            except Exception as e:
+                print 'Could not join game:', e.message
         elif option == '2':
             print 'attempting to view rounds'
-            '''
-            if option == '1':
-                balances = user.get_balance()
-                printers.print_balances(balances)
-            elif option == '2':
-                printers.print_title("TRANSFER FUNDS")
-                transaction = Prompter.request_transaction_data()
-                try:
-                    user.make_transaction(transaction)
-                    print 'Successfully transferred $%s to %s' % (
-                        transaction.amount, transaction.target_account_id)
-                except:
-                    print 'Invalid target account id'
-            elif option == '3':
-                transactions = user.get_transactions()
-                printers.print_transactions(user, transactions)
-            '''
+            try:
+                user.get_and_print_latest_game()
+            except Exception as e:
+                print 'Error getting latest game:', e.message
         elif option == '3':
             print 'Exiting program'
             break
         else:
             print 'Unrecognized option:', option
 
+
+def enter_game_view():
+    printers.print_title('PLAY GAME')
+    print 'Waiting for other player...'
+    while True:
+        participant = user.get_other_player()
+        if participant:
+            try:
+                print 'Your number:', user.random_value
+                print 'Other player\'s number:', participant['random_value']
+                print 'Result:', user.get_result()
+            except Exception as e:
+                print e.message
+            break
+        else:
+            sleep(1.5)
+
 # START GAME
+
 
 print "=" * 20 + " WELCOME TO COIN FLIPPER APP " + "=" * 20
 
