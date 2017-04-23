@@ -20,6 +20,7 @@ To use the client run the following commands (for unix)
 ```
 cd client
 source /env/bin/activate
+pip install requirements.txt
 python main.py
 ```
 

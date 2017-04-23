@@ -1,0 +1,34 @@
+application: coin-flipper
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+instance_class: F4
+automatic_scaling:
+  min_idle_instances: 0
+  max_idle_instances: 3
+  min_pending_latency: 100ms
+  max_pending_latency: automatic
+  max_concurrent_requests: 8 # default value
+
+handlers:
+- url: /static
+  static_dir: src/static
+  secure: always
+
+- url: /admin/.*
+  script: google.appengine.ext.admin.application
+  login: admin
+  secure: always
+
+- url: /api/.*
+  script: main.app
+  secure: always
+
+- url: /.*
+  script: main.app
+  secure: always
+
+libraries:
+- name: ssl
+  version: latest
