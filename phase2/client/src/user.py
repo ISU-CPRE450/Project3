@@ -120,7 +120,6 @@ class Banker(User):
 
     def disconnect_from_game(self):
         url = '%s/api/game/%s/' % (SERVER_URL, self.game_id)
-        print url
         self.game_id = None
         requests.delete(url)
 
